@@ -334,6 +334,7 @@ end
 function s.Window:close()
     self:setVisible(false)
     self:removeFromUIManager()
+
     s.window = nil
 end
 
@@ -345,10 +346,12 @@ function s.open()
         s.window:reloadRoster()
         return
     end
+
     local w = s.Window:new()
     w:initialise()
     w:instantiate()
     w:addToUIManager()
+
     s.window = w
 end
 
@@ -357,28 +360,57 @@ end
 ]]
 local function installPatch()
     if s.patched or not NPCFW_FactionManagementUI then return end
-    local cls = NPCFW_FactionManagementUI
-    if not cls.buildMembersContent or not cls.rebuildMemberJobCombos then return end
+
+    local ui = NPCFW_FactionManagementUI
+    if not ui.buildMembersContent or not ui.rebuildMemberJobCombos then return end
+
     -- Keep all Remnants management features, but remove its immediate job dropdowns.
     -- Because refreshMemberList calls this dynamically, an empty override prevents recreation.
-    local originalBuild = cls.buildMembersContent
-    cls.rebuildMemberJobCombos = function(self)
-        if self.clearMemberJobCombos then self:clearMemberJobCombos() end
+    local originalBuild = ui.buildMembersContent
+    ui.rebuildMemberJobCombos = function(self)
+        if self.clearMemberJobCombos then 
+            self:clearMemberJobCombos() 
+        end
+
+        local gameTime = getGameTime()
+        if not gameTime then return     end 
+
+        local hour = gameTime:getHour()
+
+        for _, npc in ipairs(s.getResidents()) do
+            local schedule = s.loadOrDefaultSchedule(npc.id)
+
+            if schedule then
+                local currentTask = schedule[hour + 1]
+
+                --TODO: display current task (guard, rest, etc.)
+                --TODO: Add a button to modify that specific NPCs schedule
+
+                print(npc.name + " is scheduled for " + tostring(currentTask))
+            end
+        end
+
+        local schedule = s.loadOrDefaultSchedule(npc)
     end
-    cls.buildMembersContent = function(self)
+
+    ui.buildMembersContent = function(self)
         originalBuild(self)
         local panel = self.contentPanel
         if not panel then return end
+
         -- Use the header strip above the members list rather than (0, 0),
         -- which may be occluded by the tab's existing frame/controls.
         local leftW = self.memberLeftW or math.floor(self.contentW * 0.56)
         local button = ISButton:new(8, 2, math.min(230, leftW - 16), 24,
             "Open Hourly Scheduler", self, function() s.open() end)
+
         button:initialise()
         button:instantiate()
+
         panel:addChild(button)
         self.rhsButton = button
     end
+
     s.patched = true
     print("[RHS] Replaced Remnants job dropdowns with scheduler button")
 end
@@ -395,14 +427,14 @@ end)
 
 -- Independent entry point: right-click anywhere on the ground to open the planner.
 -- This remains available when another mod overrides Remnants' Members UI.
-local function AS_WorldContext(playerIndex, context, worldObjects, test)
-    if test or not context or not NPCFW or not NPCFW.ready then return end
-    if not npcfwGetPlayerFactionRoster then return end
-    context:addOption("Remnants: Hourly Scheduler", nil, function()
-        s.open()
-    end)
-end
-Events.OnFillWorldObjectContextMenu.Add(AS_WorldContext)
+-- local function AS_WorldContext(playerIndex, context, worldObjects, test)
+--     if test or not context or not NPCFW or not NPCFW.ready then return end
+--     if not npcfwGetPlayerFactionRoster then return end
+--     context:addOption("Safehouse Expanded: Hourly Scheduler", nil, function()
+--         s.open()
+--     end)
+-- end
+-- Events.OnFillWorldObjectContextMenu.Add(AS_WorldContext)
 
 -- Immediate install attempt, with delayed retries already registered above.
 installPatch()
