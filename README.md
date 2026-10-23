@@ -34,6 +34,16 @@ Instead of guard posts being assigned to only one NPC, guard posts are created a
 - Priority system: Guard posts will have a priority-- higher priority guard posts are reserved first before lower priority ones are taken.
 - Scheduled hourly: Every hour, all guard posts are checked to see if a higher priority guard post should be manned. Two NPCs never guard the same guard post.
 
+### Wandering Traders
+Adds wandering traders that will periodically visit your safehouse every 2-5 days. They come with randomized inventories, and have a bartering system inspired by This War of Mine.
+
+*Coming after Dynamic Guard Posts*
+
+**Planned Features**:
+- Randomly visiting traders: Traders will come randomly, but always at least once per week, and never before the 3rd day.
+- Generated inventories: Traders will have randomly generated inventories, and weights will be assigned to those items semi-randomly.
+- Bartering system: This War of Mine style bartering system, where there is no currency and no "point" system displayed on the screen.
+
 ## Development
 Safehouse Expanded is a personal project and is actively being developed. Features, functionality, and plans may change over time.
 
