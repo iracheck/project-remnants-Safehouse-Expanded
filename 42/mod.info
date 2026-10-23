@@ -1,0 +1,3 @@
+name=Remnants Hourly Scheduler
+id=RemnantsHourlyScheduler
+description=Replaces Remnants job dropdowns with an hourly task planner. Requires Project Remnants.
