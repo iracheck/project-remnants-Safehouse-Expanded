@@ -14,6 +14,10 @@ SafehouseExpanded.Scheduler = SafehouseExpanded.Scheduler or {}
 
 local scheduler = SafehouseExpanded.Scheduler
 
+-- ======================
+-- DATA & CONFIGURATION |
+-- ======================
+
 -- Data key, keep constant for save compatibility
 scheduler.KEY = "SE_SchedulerData_v1"
 
@@ -21,6 +25,13 @@ scheduler.KEY = "SE_SchedulerData_v1"
 scheduler.lastApplied = scheduler.lastApplied or {}
 scheduler.lastHour = scheduler.lastHour or -1
 scheduler.lastDay = scheduler.lastDay or -1
+
+-- list of npcs that are exempt from the scheduler:
+-- scheduler.exempted = {}
+
+-- =====================
+-- UTILITY FUNCTIONS  |
+-- =====================
 
 -- get the player
 local function player() return getSpecificPlayer(0) end
@@ -49,6 +60,10 @@ local function toRows(javaTable)
 
     return rows
 end
+
+-- ======================
+-- RESIDENTS & JOBS    |
+-- ======================
 
 -- get all residents currently at home (does not include residents following the player)
 function scheduler.getResidents()
@@ -97,6 +112,10 @@ function scheduler.getJobOptions()
     return options
 end
 
+-- ======================
+-- SCHEDULE DATA       |
+-- ======================
+
 -- gets the schedule of an npc, or loads the default one if one does not exist
 function scheduler.loadOrDefaultSchedule(id)
     local store = data()
@@ -115,6 +134,10 @@ function scheduler.loadOrDefaultSchedule(id)
     end
     return store[id]
 end
+
+-- ======================
+-- JOB ASSIGNMENT      |
+-- ======================
 
 -- called when the hours change to set the job of the npc to a new one
 local function setJob(npcId, job)
@@ -150,10 +173,12 @@ function scheduler.apply(npcId, desired, force)
 
         if npc and npcfwOrderSafehouseSleep then
             local allowed = true
+
             if npcfwCanOrderSafehouseSleep then
                 local success, return_val = pcall(npcfwCanOrderSafehouseSleep, npc)
                 allowed = success and return_val == true
             end
+
             if allowed then
                 local success, return_val = pcall(npcfwOrderSafehouseSleep, npc)
                 ok = success and return_val ~= false
@@ -168,6 +193,10 @@ function scheduler.apply(npcId, desired, force)
     if ok then scheduler.lastApplied[npcId] = desired end
 end
 
+-- ======================
+-- SCHEDULER EXECUTION |
+-- ======================
+
 function scheduler.tick(force)
     local p = player()
     if not p or not NPCFW or not NPCFW.ready then return end
@@ -179,11 +208,13 @@ function scheduler.tick(force)
     local day = math.floor(time:getWorldAgeHours() / 24)
 
     if not force and scheduler.lastHour == hour and scheduler.lastDay == day then return end
+
     scheduler.lastHour, scheduler.lastDay = hour, day
 
     local active = {}
     for _, npc in ipairs(scheduler.getResidents()) do
         active[npc.id] = true
+
         local schedule = scheduler.loadOrDefaultSchedule(npc.id)
         if schedule then scheduler.apply(npc.id, schedule[hour+1], force) end
     end
@@ -191,8 +222,12 @@ function scheduler.tick(force)
     for id in pairs(scheduler.lastApplied) do
         if not active[id] then scheduler.lastApplied[id] = nil end
     end
-    
+
 end
+
+-- ======================
+-- MODULE LIFECYCLE    |
+-- ======================
 
 -- Initial startup
 function scheduler.enable()

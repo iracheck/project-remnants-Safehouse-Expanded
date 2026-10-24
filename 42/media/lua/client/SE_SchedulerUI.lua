@@ -18,6 +18,24 @@ SafehouseExpanded.SchedulerUI = SafehouseExpanded.SchedulerUI or {}
 local ui = SafehouseExpanded.SchedulerUI
 local scheduler = SafehouseExpanded.Scheduler
 
+-- jobId : color
+local JOB_COLORS = {
+    SLEEP = {r=0.318, g=0.251, b=0.471, a=0.9},
+    IDLE = {r=0.616, g=0.514, b=0.769, a=0.9},
+
+    GUARD = {r=0.529, g=0.243, b=0.314, a=0.9},
+    COOK = {r=0.882, g=0.541, b=0.259, a=0.9},
+    LUMBERJACK = {r=0.396, g=0.298, b=0.247, a=0.9},
+    FARM = {r=0.329, g=0.525, b=0.353, a=0.9},
+    HAUL = {r=0.259, g=0.490, b=0.659, a=0.9},
+
+    DEFAULT = {r=0.384, g=0.412, b=0.443, a=0.9}
+}
+
+-- =================
+-- CREATING WINDOW |
+-- =================
+
 ui.Window = ISCollapsableWindow:derive("AdvancedSchedulerWindow")
 function ui.Window:new()
     local w, h = 910, 430
@@ -79,6 +97,33 @@ function ui.Window:createChildren()
     self:reloadRoster()
 end
 
+-- ===============
+-- UPDATING INFO |
+-- ===============
+
+-- update grid to show current job schedule
+function ui.Window:updateGrid()
+    local schedule = self.selectedId and scheduler.loadOrDefaultSchedule(self.selectedId) or nil
+    local current = getGameTime() and getGameTime():getHour() or -1
+
+    for hour = 0,23 do
+        local button = self.hourButtons[hour+1]
+        if button then
+            local task = schedule and schedule[hour+1] or "-"
+            local prefix = current == hour and ">" or ""
+
+            button:setTitle(prefix .. string.format("%02d",hour) .. "\n" .. tostring(task))
+            button:setEnable(schedule ~= nil)
+
+            if JOB_COLORS[task] then
+                button.backgroundColor = JOB_COLORS[task]
+            else
+                button.backgroundColor = JOB_COLORS.DEFAULT
+            end
+        end
+    end
+end
+
 function ui.Window:reloadRoster()
     local entries = scheduler.getResidents()
     self.memberList:clear()
@@ -96,6 +141,10 @@ function ui.Window:reloadRoster()
     self:updateGrid()
 end
 
+-- ===================
+-- UI BUTTON EFFECTS |
+-- ===================
+
 function ui.Window:onMemberSelected()
     local item = self.memberList.items[self.memberList.selected]
     if item and item.item then self.selectedId = item.item.id end
@@ -106,32 +155,6 @@ function ui.Window:onJobSelected(combo)
     self.jobId = tostring(combo:getSelectedData() or "IDLE")
 end
 
--- update grid to show current job schedule
-function ui.Window:updateGrid()
-    local schedule = self.selectedId and scheduler.loadOrDefaultSchedule(self.selectedId) or nil
-    local current = getGameTime() and getGameTime():getHour() or -1
-
-    for hour = 0,23 do
-        local button = self.hourButtons[hour+1]
-        if button then
-            local task = schedule and schedule[hour+1] or "-"
-            local prefix = current == hour and ">" or ""
-
-            button:setTitle(prefix .. string.format("%02d",hour) .. "\n" .. tostring(task))
-            button:setEnable(schedule ~= nil)
-
-            --TODO: Better colors
-            if task == "SLEEP" then
-                button.backgroundColor = {r=0.35,g=0.28,b=0.58,a=0.9}
-            elseif task == "IDLE" then
-                button.backgroundColor = {r=0.18,g=0.46,b=0.37,a=0.9}
-            else
-                button.backgroundColor = {r=0.25,g=0.36,b=0.60,a=0.9}
-            end
-        end
-    end
-end
-
 -- change hour to currently selected jobID
 function ui.Window:onHourClicked(btn)
     if not self.selectedId then return end
@@ -139,6 +162,8 @@ function ui.Window:onHourClicked(btn)
 
     schedule[btn.hour+1] = self.jobId
     self:updateGrid()
+
+    scheduler.tick(true)
 end
 
 -- copy schedule to all other survivors
@@ -157,6 +182,10 @@ function ui.Window:onApplyNow()
     scheduler.lastApplied = {}
     scheduler.tick(true)
 end
+
+-- ==================
+-- WINDOW LIFECYCLE |
+-- ==================
 
 -- close the scheduler window
 function ui.Window:close()
