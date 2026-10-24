@@ -1,5 +1,7 @@
-name=Project Remnants: Safehouse Expanded Unofficial Addon
+name=Project Remnants: Safehouse Expanded (Unofficial Addon)
 id=PPR_SafehouseExpanded
-description=Replaces Remnants job dropdowns with an hourly task planner. Requires Project Remnants.
+author=iGalaxied
+description=Expands Project Remnants' safehouse management with advanced scheduling, quality-of-life improvements and other work in progress features. Requires Project Remnants.
 versionMin=42.20
+modversion=1.0.0
 require=ProjectRemnants
