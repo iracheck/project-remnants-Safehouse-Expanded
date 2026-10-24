@@ -24,6 +24,12 @@ Survivors can be assigned different shifts throughout the day, letting you set u
 - Better default schedule
 
 ## Planned Modules
+### Automations & Improvements
+A handful of minor features making Safehouse life a little safer, more enjoyable, or automated. These will be added over time, and not as a dedicated module.
+
+**Planned Features**:
+- Automatic stove shutoff
+
 ### Dynamic Guard Posts
 Instead of guard posts being assigned to only one NPC, guard posts are created as shared locations that are handed out on a first-come, first-serve basis with priority and scheduling considerations. 
 
