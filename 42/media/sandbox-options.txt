@@ -1,0 +1,9 @@
+VERSION = 1,
+
+option SafehouseExpanded.EnableScheduler
+{
+    type = boolean,
+    default = true,
+    page = SafehouseExpanded,
+    translation = SafehouseExpanded_EnableScheduler,
+}

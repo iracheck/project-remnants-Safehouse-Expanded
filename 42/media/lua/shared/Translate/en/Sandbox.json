@@ -1,0 +1,6 @@
+
+{
+    "Sandbox_SafehouseExpanded": "Safehouse Expanded",
+    "Sandbox_SafehouseExpanded_EnableScheduler": "Enable Advanced Scheduler",
+    "Sandbox_SafehouseExpanded_EnableScheduler_tooltip": "Enables hourly job scheduling for Project Remnants safehouse residents."
+}
