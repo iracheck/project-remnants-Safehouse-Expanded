@@ -1,6 +1,11 @@
-# Project Remnants: Safehouse Expanded (Submod)
+# Project Remnants: Safehouse Expanded
+## Unofficial Submod developed by iGalaxied
 
-Safehouse Expanded is a personal passion project made by iGalaxied intending to make Safehouse gameplay more interesting, complex, or varied. It will, in the future, consist of multiple submods that are packaged into one that can be toggled within the Sandbox Settings, but for now it only consists of the Scheduler.
+**Safehouse Expanded** is a passion project aiming to make safehouse management in Project Remnants more interesting, complex, and varied. The goal is to expand upon Project Remnants' existing safehouse systems, giving players more control over their community while introducing new mechanics and other quality of life changes.
+
+Safehouse Expanded is designed to be modular. Each major feature is developed independently of eachother (with some level of integration between modules, when applicable) and packaed into a single addon, with modules being toggleable and configurable through your saves Sandbox Options.
+
+__Currently, Safehouse Expanded includes the Advanced Scheduler module, with more features planned for future updates.__
 
 ## Current Modules
 ### Advanced Scheduler
@@ -12,10 +17,11 @@ Survivors can be assigned different shifts throughout the day, letting you set u
 - 24-hour scheduling: Assign a different activity for each hour of the day
 - Individual schedules: Each safehouse resident has their own routine, work shifts, and designated sleep times.
 - Jobs: Schedule any safehouse job, including guarding, hauling, farming, cooking, logging, and more.
-- Sleep/Recreation: Added sleep and recreation (idle) jobs, to give your people a break!
+- New sleep job: Added sleep jobs, allowing you to give your NPCs dedicated sleep times.
 - Persistent schedules: Schedules are retained through game sessions, and when NPCs leave/join your party.
 - Copying: Copy a survivors schedule to all others with a single button press.
 - Automatic job switching: Every hour, survivors check what job they're supposed to be doing and their active task changes accordingly.
+- Integrated into existing Remnants behavior and vision: If an NPC is not tired, he won't sleep-- likewise, if he is tired during the day, he might go to bed despite being assigned to work. I intended to maintain Pat's vision of having NPCs be more than just robots who do exactly as you say.
 
 **Planned Features**:
 - Creatable/swappable presets
@@ -57,4 +63,4 @@ Safehouse Expanded is a personal project and is actively being developed. Featur
 
 **Developed by iGalaxied.**
 
-**AI Acknowledgement**: Code was written with AI assistance, however it was progressively reviewed and refactored by human eyes with human-written code.
+**AI Acknowledgement**: Code was written with AI assistance, however it was progressively reviewed and refactored by human eyes with a significant portion of human-written code.
