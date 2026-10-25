@@ -225,13 +225,13 @@ function scheduler.tick(force)
 
 end
 
--- ======================
--- MODULE LIFECYCLE    |
--- ======================
+-- ==================================
+-- MODULE LIFECYCLE & INTERACTION   |
+-- ==================================
 
 -- Initial startup
 function scheduler.enable()
-    if scheduler.enabled then return end
+    if SafehouseExpanded.isSchedulerEnabled() then return end
     scheduler.enabled = true
 
     Events.OnGameStart.Add(scheduler.onGameStart)

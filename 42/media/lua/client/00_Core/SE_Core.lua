@@ -6,3 +6,17 @@
 ]]
 
 SafehouseExpanded = SafehouseExpanded or {}
+
+local core = SafehouseExpanded
+
+function core.isEnabled(moduleName)
+    local settings = SandboxVars and SandboxVars.SafehouseExpanded
+
+    if not settings then return true end
+
+    return settings[moduleName] ~= false
+end
+
+function core.isSchedulerEnabled()
+    return core.isEnabled("EnableScheduler")
+end

@@ -17,12 +17,22 @@ require "ISUI/ISButton"
 
 SafehouseExpanded.Patcher = SafehouseExpanded.Patcher or {}
 
+local core = SafehouseExpanded
 local patcher = SafehouseExpanded.Patcher
-local scheduler = SafehouseExpanded.Scheduler
 
---TODO: Later implement settings which let you disable parts of the mod
+local scheduler = SafehouseExpanded.Scheduler
+local schedulerUI = SafehouseExpanded.SchedulerUI
+
 function patcher.installPatches()
-    patcher.installSchedulerPatch()
+    if core.isSchedulerEnabled() then
+        patcher.installSchedulerPatch()
+
+        if not patcher.schedulerPatched then
+            SafehouseExpanded.warn("Failed to install scheduler patch.")
+        end
+
+        scheduler.enable()
+    end
 end
 
 function patcher.installSchedulerPatch()
@@ -55,7 +65,7 @@ function patcher.installSchedulerPatch()
             local npcId = npc.npcId
 
             local button = ISButton:new(buttonX, buttonY, buttonWidth, buttonHeight, "Edit Schedule", self, function()
-                scheduler.open(npcId)
+                schedulerUI.open(npcId)
             end
             )
 
