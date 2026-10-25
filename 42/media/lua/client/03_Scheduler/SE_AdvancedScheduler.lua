@@ -18,7 +18,6 @@ local scheduler = SafehouseExpanded.Scheduler
 -- DATA & CONFIGURATION |
 -- ======================
 
--- Data key, keep constant for save compatibility
 scheduler.KEY = "SE_SchedulerData_v1"
 
 -- keep track of last time a job was applied to the NPC
@@ -33,7 +32,6 @@ scheduler.lastDay = scheduler.lastDay or -1
 -- UTILITY FUNCTIONS  |
 -- =====================
 
--- get the player
 local function player() return getSpecificPlayer(0) end
 
 -- retrieves the existing scheduler data, or creates new one
