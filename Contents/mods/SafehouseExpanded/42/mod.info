@@ -1,7 +1,13 @@
 name=Project Remnants: Safehouse Expanded (Unofficial Addon)
 id=PPR_SafehouseExpanded
+
 author=iGalaxied
 description=Expands Project Remnants' safehouse management with advanced scheduling, quality-of-life improvements and other work in progress features. Requires Project Remnants.
+
 versionMin=42.20
 modversion=1.0.0
+
+poster=poster.png
+icon=icon.png
+
 require=ProjectRemnants
