@@ -53,7 +53,7 @@ A handful of minor features making safehouse life a little safer, more enjoyable
 
 **Planned Features:**
 - Automatic stove shutoff.
-- NPC unstuck button
+- NPC unstuck button (default off)
 
 ### Dynamic Guard Posts
 
@@ -66,28 +66,6 @@ Instead of guard posts being assigned to only one NPC, guard posts are created a
 - Multiple guards per post: Each guard post will allow multiple guards, in the case of overflow.
 - Priority system: Guard posts will have a priority—higher-priority guard posts are reserved first before lower-priority ones are taken.
 - Scheduled hourly: Every hour, all guard posts are checked to see if a higher-priority guard post should be manned. Two NPCs never guard the same guard post.
-
-### New Jobs
-
-Adds new jobs to make safehouse life more interesting!
-
-*Coming after Dynamic Guard Posts.*
-
-**Planned Features**:
-- Generator maintenance job: Repair and refuel designated generators.
-
-### Visiting Survivors
-
-Adds visiting survivors that will periodically visit your settlement to trade, request assistance, offer gifts, or ask to join your community.
-
-*Coming after Remnants Factions update.*
-
-**Planned Features:**
-- Visiting survivors: Survivors will periodically visit your settlement, asking for aid or to join you.
-- Randomly visiting traders: Traders will come randomly, but always at least once per week, and never before the 3rd day.
-- Generated inventories: Survivors and traders will have randomly generated inventories, and weights will be assigned to those items semi-randomly.
-- Bartering system: This War of Mine-style bartering system, where there is no currency and no "point" system displayed on the screen.
-- Reputation system: Your community will have a reputation with each survivor who visits you. Someone who asked for food two days ago might decide to come back and join you later. Killing a trader might make other traders more hesitant to visit you.
 
 ## Development
 
