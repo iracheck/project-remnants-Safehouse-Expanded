@@ -7,8 +7,8 @@
 ]]
 
 -- SafehouseExpanded dependencies
-require "SE_Core"
-require "SE_Logger"
+require "00_Core/SE_Core"
+require "00_Core/SE_Logger"
 
 SafehouseExpanded.Scheduler = SafehouseExpanded.Scheduler or {}
 
@@ -229,7 +229,7 @@ end
 
 -- Initial startup
 function scheduler.enable()
-    if SafehouseExpanded.isSchedulerEnabled() then return end
+    if scheduler.enabled then return end
     scheduler.enabled = true
 
     Events.OnGameStart.Add(scheduler.onGameStart)
@@ -243,3 +243,5 @@ end
 function scheduler.onEveryHour()
     scheduler.tick(false)
 end
+
+SafehouseExpanded.log("Loading Scheduler...")

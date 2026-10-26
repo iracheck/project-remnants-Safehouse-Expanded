@@ -5,7 +5,7 @@
     System for creating a coherent and consistent logging structure.
 ]]
 
-require "SE_Core"
+require "00_Core/SE_Core"
 
 function SafehouseExpanded.log(message)
     print("[SafehouseExpanded] " .. tostring(message))

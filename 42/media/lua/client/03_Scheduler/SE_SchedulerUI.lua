@@ -5,8 +5,8 @@
     Handles the creation, opening, closing, updating, and logic of the scheduler UI window.
 ]]
 
-require "SE_Core"
-require "SE_AdvancedScheduler"
+require "00_Core/SE_Core"
+require "03_Scheduler/SE_AdvancedScheduler"
 
 require "ISUI/ISCollapsableWindow"
 require "ISUI/ISButton"
@@ -214,3 +214,5 @@ function ui.open(selectedId)
 
     ui.window = w
 end
+
+SafehouseExpanded.log("Loading SchedulerUI...")

@@ -6,10 +6,10 @@
 ]]
 
 -- safehouse expanded dependencies
-require "SE_Core"
-require "SE_Logger"
-require "SE_AdvancedScheduler"
-require "SE_SchedulerUI"
+require "00_Core/SE_Core"
+require "00_Core/SE_Logger"
+require "03_Scheduler/SE_AdvancedScheduler"
+require "03_Scheduler/SE_SchedulerUI"
 
 -- other
 require "NPCFW_FactionManagementUI"
@@ -89,3 +89,5 @@ function patcher.installSchedulerPatch()
 end
 
 patcher.installPatches()    
+
+SafehouseExpanded.log("Loading Patcher...")

@@ -20,3 +20,5 @@ end
 function core.isSchedulerEnabled()
     return core.isEnabled("EnableScheduler")
 end
+
+SafehouseExpanded.log("Loading Core...")
