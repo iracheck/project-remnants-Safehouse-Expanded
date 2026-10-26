@@ -5,9 +5,11 @@
     Handles the creation, opening, closing, updating, and logic of the scheduler UI window.
 ]]
 
+-- safehouse expanded requirements
 require "00_Core/SE_Core"
 require "03_Scheduler/SE_AdvancedScheduler"
 
+require "ISUI/ISLabel"
 require "ISUI/ISCollapsableWindow"
 require "ISUI/ISButton"
 require "ISUI/ISComboBox"
@@ -41,13 +43,13 @@ function ui.Window:new()
     local w, h = 910, 430
     local sw = getCore():getScreenWidth()
     local sh = getCore():getScreenHeight()
-    local o = ISCollapsableWindow.new(self, math.max(10,math.floor((sw-w)/2)), math.max(10,math.floor((sh-h)/2)), w, h)
+    local window = ISCollapsableWindow.new(self, math.max(10,math.floor((sw-w)/2)), math.max(10,math.floor((sh-h)/2)), w, h)
     
-    o.resizable = false
-    o.title = "Remnants - Hourly Schedule"
-    o.selectedId = nil
-    o.jobId = "IDLE"
-    return o
+    window.resizable = false
+    window.title = getText("UI_Scheduler_WindowName")
+    window.selectedId = nil
+    window.jobId = "IDLE"
+    return window
 end
 
 function ui.Window:createChildren()
@@ -65,14 +67,32 @@ function ui.Window:createChildren()
     self.jobCombo:initialise()
     self.jobCombo:instantiate()
 
+    self.jobLabel = ISLabel:new(
+    252, top - 20, 20,
+    getText("UI_Scheduler_JobToAssign"),
+    1, 1, 1, 1,
+    UIFont.Small, true
+    )
+    self.jobLabel:initialise()
+    self:addChild(self.jobLabel)
+
     for _, job in ipairs(scheduler.getJobOptions()) do
         self.jobCombo:addOptionWithData(job.label,job.id)
     end
 
     self:addChild(self.jobCombo)
     self.jobCombo:setSelectedData("IDLE")
-    self.hourButtons = {}
 
+    self.memberLabel = ISLabel:new(
+    210, top + 65, 20,
+    getText("UI_Scheduler_EditingSchedule", ""),
+    1, 1, 1, 1,
+    UIFont.Small, true
+    )
+    self.memberLabel:initialise()
+    self:addChild(self.memberLabel)
+
+    self.hourButtons = {}
     for hour=0,23 do
         local col = hour % 12
         local row = math.floor(hour / 12)
@@ -84,12 +104,12 @@ function ui.Window:createChildren()
         self.hourButtons[hour+1] = btn
     end
 
-    self.copyButton = ISButton:new(210,top+260,210,30,"Copy day to all residents", self, ui.Window.onCopyAll)
+    self.copyButton = ISButton:new(210, top+260, 210, 30, getText("UI_Scheduler_ApplyToAll"), self, ui.Window.onCopyAll)
     self.copyButton:initialise()
     self.copyButton:instantiate()
     self:addChild(self.copyButton)
 
-    self.applyButton = ISButton:new(650,top+260,232,30,"Apply current hour now", self, ui.Window.onApplyNow)
+    self.applyButton = ISButton:new(650,top+260,232,30,getText("UI_Scheduler_ApplyHourNow"), self, ui.Window.onApplyNow)
     self.applyButton:initialise()
     self.applyButton:instantiate()
     self:addChild(self.applyButton)
@@ -123,6 +143,11 @@ function ui.Window:updateGrid()
     local schedule = self.selectedId and scheduler.loadOrDefaultSchedule(self.selectedId) or nil
     local current = getGameTime() and getGameTime():getHour() or -1
 
+    local selectedItem = self.memberList.items[self.memberList.selected]
+    local residentName = selectedItem and selectedItem.item and selectedItem.item.name or ""
+
+    self.memberLabel:setName(getText("UI_Scheduler_EditingSchedule", residentName))
+
     for hour = 0,23 do
         local button = self.hourButtons[hour+1]
         if button then
@@ -131,7 +156,7 @@ function ui.Window:updateGrid()
 
             local taskText = shortenTextToWidth(tostring(task), button:getWidth(), 6, UIFont.Small)
 
-            button:setTitle(prefix .. string.format("%02d",hour) .. "\n" .. taskText)
+            button:setTitle(prefix .. string.format("%02d", hour) .. "\n" .. taskText)
             button:setEnable(schedule ~= nil)
 
             local color
