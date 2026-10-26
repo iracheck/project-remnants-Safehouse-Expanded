@@ -53,6 +53,7 @@ A handful of minor features making safehouse life a little safer, more enjoyable
 
 **Planned Features:**
 - Automatic stove shutoff.
+- NPC unstuck button
 
 ### Dynamic Guard Posts
 
@@ -66,11 +67,20 @@ Instead of guard posts being assigned to only one NPC, guard posts are created a
 - Priority system: Guard posts will have a priority—higher-priority guard posts are reserved first before lower-priority ones are taken.
 - Scheduled hourly: Every hour, all guard posts are checked to see if a higher-priority guard post should be manned. Two NPCs never guard the same guard post.
 
+### New Jobs
+
+Adds new jobs to make safehouse life more interesting!
+
+*Coming after Dynamic Guard Posts.*
+
+**Planned Features**:
+- Generator maintenance job: Repair and refuel designated generators.
+
 ### Visiting Survivors
 
 Adds visiting survivors that will periodically visit your settlement to trade, request assistance, offer gifts, or ask to join your community.
 
-*Coming after Dynamic Guard Posts.*
+*Coming after Remnants Factions update.*
 
 **Planned Features:**
 - Visiting survivors: Survivors will periodically visit your settlement, asking for aid or to join you.
