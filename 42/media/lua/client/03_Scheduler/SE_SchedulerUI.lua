@@ -153,7 +153,7 @@ end
 
 
 function ui.Window:reloadRoster()
-    local entries = scheduler.getResidents()
+    local entries = scheduler.getResidents(true)
     self.memberList:clear()
     for _, item in ipairs(entries) do self.memberList:addItem(item.name,item) end
     local index = 1
@@ -198,7 +198,7 @@ end
 function ui.Window:onCopyAll()
     if not self.selectedId then return end
     local src = scheduler.loadOrDefaultSchedule(self.selectedId)
-    for _, member in ipairs(scheduler.getResidents()) do
+    for _, member in ipairs(scheduler.getResidents(true)) do
         local dst = scheduler.loadOrDefaultSchedule(member.id)
         for h=1,24 do dst[h] = src[h] end
     end

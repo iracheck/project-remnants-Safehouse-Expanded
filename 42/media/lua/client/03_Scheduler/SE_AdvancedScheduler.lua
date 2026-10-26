@@ -64,7 +64,7 @@ end
 -- ======================
 
 -- get all residents currently at home (does not include residents following the player)
-function scheduler.getResidents()
+function scheduler.getResidents(includeParty)
     if not npcfwGetPlayerFactionRoster then return {} end
 
     local ok, result = pcall(npcfwGetPlayerFactionRoster)
@@ -73,12 +73,13 @@ function scheduler.getResidents()
     local members = {}
 
     for _, r in ipairs(toRows(result)) do
-        if r.isBaseResident == true or tostring(r.assignment or "") == "BASE_RESIDENT" then
+        if includeParty or r.isBaseResident == true or tostring(r.assignment or "") == "BASE_RESIDENT" then
             members[#members + 1] = {
                 id = tostring(r.npcId),
                 name = tostring(r.displayName or r.npcId),
             }
         end
+        
     end
 
     table.sort(members, function(a,b) return a.name < b.name end)
@@ -210,7 +211,7 @@ function scheduler.tick(force)
     scheduler.lastHour, scheduler.lastDay = hour, day
 
     local active = {}
-    for _, npc in ipairs(scheduler.getResidents()) do
+    for _, npc in ipairs(scheduler.getResidents(false)) do
         active[npc.id] = true
 
         local schedule = scheduler.loadOrDefaultSchedule(npc.id)
