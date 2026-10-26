@@ -68,7 +68,7 @@ function ui.Window:createChildren()
     self.jobCombo:instantiate()
 
     self.jobLabel = ISLabel:new(
-    252, top - 20, 20,
+    252, top + 20, 20,
     getText("UI_Scheduler_JobToAssign"),
     1, 1, 1, 1,
     UIFont.Small, true
