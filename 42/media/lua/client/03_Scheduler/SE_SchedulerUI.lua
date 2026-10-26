@@ -26,8 +26,8 @@ local JOB_COLORS = {
     GUARD = {r=0.529, g=0.243, b=0.314, a=0.9},
     COOK = {r=0.882, g=0.541, b=0.259, a=0.9},
     LUMBERJACK = {r=0.396, g=0.298, b=0.247, a=0.9},
-    FARM = {r=0.329, g=0.525, b=0.353, a=0.9},
-    HAUL = {r=0.259, g=0.490, b=0.659, a=0.9},
+    FARMER = {r=0.329, g=0.525, b=0.353, a=0.9},
+    HAULER = {r=0.259, g=0.490, b=0.659, a=0.9},
 
     DEFAULT = {r=0.384, g=0.412, b=0.443, a=0.9}
 }
@@ -101,6 +101,23 @@ end
 -- UPDATING INFO |
 -- ===============
 
+-- shorten text to an appropriate width
+local function shortenTextToWidth(originalText, width, padding, font)
+    local availableWidth = width - padding
+    local newText = originalText
+
+    if availableWidth >= getTextManager():MeasureStringX(font, originalText) then
+        return originalText
+    end
+
+    repeat
+        newText = string.sub(newText, 1, -2)
+    until availableWidth >= getTextManager():MeasureStringX(font, newText) or #newText == 0
+
+    return newText
+
+end
+
 -- update grid to show current job schedule
 function ui.Window:updateGrid()
     local schedule = self.selectedId and scheduler.loadOrDefaultSchedule(self.selectedId) or nil
@@ -112,17 +129,28 @@ function ui.Window:updateGrid()
             local task = schedule and schedule[hour+1] or "-"
             local prefix = current == hour and ">" or ""
 
-            button:setTitle(prefix .. string.format("%02d",hour) .. "\n" .. tostring(task))
+            local taskText = shortenTextToWidth(tostring(task), button:getWidth(), 6, UIFont.Small)
+
+            button:setTitle(prefix .. string.format("%02d",hour) .. "\n" .. taskText)
             button:setEnable(schedule ~= nil)
 
+            local color
             if JOB_COLORS[task] then
-                button.backgroundColor = JOB_COLORS[task]
+                color = JOB_COLORS[task]
             else
-                button.backgroundColor = JOB_COLORS.DEFAULT
+                color = JOB_COLORS.DEFAULT
             end
+
+            button.backgroundColor = {
+                r = color.r,
+                g = color.g,
+                b = color.b,
+                a = color.a
+            }
         end
     end
 end
+
 
 function ui.Window:reloadRoster()
     local entries = scheduler.getResidents()
