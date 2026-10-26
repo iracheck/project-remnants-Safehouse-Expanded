@@ -1,9 +1,8 @@
 {
     "UI_Scheduler_WindowName": "Schedule Editor",
-    "UI_Scheduler_JobToAssign": "Job to Assign:",
-    "UI_Scheduler_EditingSchedule": "Editing Schedule: %1",
+    "UI_Scheduler_EditingSchedule": "Editing Schedule of %1",
     "UI_Scheduler_ApplyHourNow": "Apply current hour now",
     "UI_Scheduler_ApplyToAll": "Apply schedule to all NPCs",
     
-    "UI_Remnants_EditSchedule": "Edit Schedule"
+    "UI_Scheduler_EditSchedule": "Edit Schedule"
 }

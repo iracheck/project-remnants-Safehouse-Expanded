@@ -67,15 +67,6 @@ function ui.Window:createChildren()
     self.jobCombo:initialise()
     self.jobCombo:instantiate()
 
-    self.jobLabel = ISLabel:new(
-    252, top + 20, 20,
-    getText("UI_Scheduler_JobToAssign"),
-    1, 1, 1, 1,
-    UIFont.Small, true
-    )
-    self.jobLabel:initialise()
-    self:addChild(self.jobLabel)
-
     for _, job in ipairs(scheduler.getJobOptions()) do
         self.jobCombo:addOptionWithData(job.label,job.id)
     end

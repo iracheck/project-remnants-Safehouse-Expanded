@@ -64,7 +64,7 @@ function patcher.installSchedulerPatch()
 
             local npcId = npc.npcId
 
-            local button = ISButton:new(buttonX, buttonY, buttonWidth, buttonHeight, getText("UI_Remnants_EditSchedule"), self, function()
+            local button = ISButton:new(buttonX, buttonY, buttonWidth, buttonHeight, getText("UI_Scheduler_EditSchedule"), self, function()
                 schedulerUI.open(npcId)
             end
             )
