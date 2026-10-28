@@ -1,0 +1,6 @@
+version=1
+id=3827943865
+title=Project Remnants: Safehouse Expanded
+description=A work in progress collection of new features for Project Remnants, aiming to change the way safehouses work.
+tags=Build 42;Framework;Interface
+visibility=public
