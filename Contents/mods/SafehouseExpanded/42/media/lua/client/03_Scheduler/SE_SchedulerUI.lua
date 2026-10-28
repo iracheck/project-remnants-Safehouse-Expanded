@@ -15,11 +15,13 @@ require "ISUI/ISCollapsableWindow"
 require "ISUI/ISButton"
 require "ISUI/ISComboBox"
 require "ISUI/ISScrollingListBox"
+require "ISUI/ISTextEntryBox"
 
 SafehouseExpanded.SchedulerUI = SafehouseExpanded.SchedulerUI or {}
 
 local ui = SafehouseExpanded.SchedulerUI
 local scheduler = SafehouseExpanded.Scheduler
+local presets = SafehouseExpanded.SchedulerPresets
 
 -- jobId : color
 local JOB_COLORS = {
@@ -106,7 +108,42 @@ function ui.Window:createChildren()
     self.applyButton:instantiate()
     self:addChild(self.applyButton)
 
+    -- Select an existing preset
+    self.presetCombo = ISComboBox:new(590, top, 140, 26, self, ui.Window.onSelectPreset)
+    self.presetCombo:initialise()
+    self.presetCombo:instantiate()
+    self:addChild(self.presetCombo)
+
+    -- Name a new preset or overwrite an existing one
+    self.presetName = ISTextEntryBox:new("", 736, top, 146, 26)
+    self.presetName:initialise()
+    self.presetName:instantiate()
+    self:addChild(self.presetName)
+
+    self.presetName.onTextChange = function()
+        self:onPresetNameChanged()
+    end
+
+    -- Save preset
+    self.savePresetButton = ISButton:new(590, top + 32, 90, 26, getText("UI_Scheduler_SavePreset"), self, ui.Window.onSavePreset)
+    self.savePresetButton:initialise()
+    self.savePresetButton:instantiate()
+    self:addChild(self.savePresetButton)
+
+    -- Delete preset
+    self.deletePresetButton = ISButton:new(686, top + 32, 90, 26, getText("UI_Scheduler_DeletePreset"), self, ui.Window.onDeletePreset)
+    self.deletePresetButton:initialise()
+    self.deletePresetButton:instantiate()
+    self:addChild(self.deletePresetButton)
+
+    -- Load preset
+    self.loadPresetButton = ISButton:new(782, top + 32, 100, 26, getText("UI_Scheduler_LoadPreset"), self, ui.Window.onLoadPreset)
+    self.loadPresetButton:initialise()
+    self.loadPresetButton:instantiate()
+    self:addChild(self.loadPresetButton)
+
     self:reloadRoster()
+    self:reloadPresets()
 end
 
 -- ===============
@@ -186,6 +223,17 @@ function ui.Window:reloadRoster()
     self:updateGrid()
 end
 
+function ui.Window:reloadPresets(selectedName)
+    self.presetCombo:clear()
+    self.presetCombo:addOptionWithData("Select Preset", "")
+
+    for _, name in ipairs(presets.getAll() or {}) do
+        self.presetCombo:addOptionWithData(name, name)
+    end
+
+    self.presetCombo:setSelectedData(selectedName or "")
+end
+
 -- ===================
 -- UI BUTTON EFFECTS |
 -- ===================
@@ -228,6 +276,50 @@ function ui.Window:onApplyNow()
     scheduler.tick(true)
 end
 
+function ui.Window:onSelectPreset(combo)
+    local name = combo:getSelectedData()
+    if name then
+        self.presetName:setText(name)
+    end
+end
+
+function ui.Window:onDeletePreset()
+    local name = self.presetCombo:getSelectedData()
+
+    if not name or name == "" then return end
+
+    if presets.delete(name) then
+        self.reloadPresets()
+        self.presetName:setText("")
+    end
+end
+
+function ui.Window:onLoadPreset()
+    local name = self.presetCombo:getSelectedData()
+
+    if not name or name == "" then return end
+
+    if presets.get(name) then
+        
+    end
+end
+
+function ui.Window:onSavePreset()
+end
+
+function ui.Window:onPresetNameChanged()
+    local name = self.presetName:getText()
+
+    for _, presetName in ipairs(presets.getAll() or {}) do
+        if presetName == name then
+            self.presetCombo:setSelectedData(presetName)
+            return
+        end
+    end
+
+    self.presetCombo:setSelectedData("")
+end
+
 -- ==================
 -- WINDOW LIFECYCLE |
 -- ==================
@@ -248,6 +340,7 @@ function ui.open(selectedId)
         ui.window:setVisible(true)
         ui.window:bringToTop()
         ui.window:reloadRoster()
+        ui.window:reloadPresets()
         return
     end
 
