@@ -8,6 +8,7 @@
 -- safehouse expanded requirements
 require "00_Core/SE_Core"
 require "03_Scheduler/SE_AdvancedScheduler"
+require "03_Scheduler/SE_SchedulerPresets"
 
 require "ISUI/ISLabel"
 require "ISUI/ISCollapsableWindow"
