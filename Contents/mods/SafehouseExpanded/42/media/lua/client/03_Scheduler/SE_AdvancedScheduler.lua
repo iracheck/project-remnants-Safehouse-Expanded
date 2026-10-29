@@ -9,10 +9,12 @@
 -- SafehouseExpanded dependencies
 require "00_Core/SE_Core"
 require "00_Core/SE_Logger"
+require "00_Core/SE_SchedulerPresets"
 
 SafehouseExpanded.Scheduler = SafehouseExpanded.Scheduler or {}
 
 local scheduler = SafehouseExpanded.Scheduler
+local presets = SafehouseExpanded.SchedulerPresets
 
 -- ======================
 -- DATA & CONFIGURATION |
@@ -124,9 +126,16 @@ function scheduler.loadOrDefaultSchedule(id)
     if not store[id] then
         local hours = {}
 
-        -- assign a default schedule that is just the default of Project Remnants--> idle all day
-        for hour = 0, 23 do
-            hours[hour + 1] = "IDLE"
+        local default = presets.copy("Default")
+
+        if default then
+            for hour = 1, 24 do
+                hours[hour] = default[hour]
+            end
+        else
+            for hour = 1, 24 do
+                hours[hour] = "IDLE"
+            end
         end
 
         store[id] = hours
