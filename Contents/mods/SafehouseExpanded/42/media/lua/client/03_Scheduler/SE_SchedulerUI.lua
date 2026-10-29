@@ -341,7 +341,7 @@ function ui.Window:onSavePreset()
 end
 
 function ui.Window:onPresetNameChanged()
-    local name = self.presetName:getText() or ""
+    local name = self.presetName:getInternalText() or ""
     name = name:match("^%s*(.-)%s*$")
 
     for _, presetName in ipairs(presets.getAll() or {}) do
