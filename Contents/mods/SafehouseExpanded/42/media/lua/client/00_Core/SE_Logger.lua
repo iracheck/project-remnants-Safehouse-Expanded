@@ -14,3 +14,7 @@ end
 function SafehouseExpanded.warn(message)
     print("[WARNING] [SafehouseExpanded] " .. tostring(message))
 end
+
+function SafehouseExpanded.templog(message)
+    print("[DEBUG TEMP LOG] [SafehouseExpanded] " .. tostring(message))
+end
