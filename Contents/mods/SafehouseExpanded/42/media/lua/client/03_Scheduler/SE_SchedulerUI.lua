@@ -278,6 +278,7 @@ end
 
 function ui.Window:onSelectPreset(combo)
     local name = combo:getSelectedData()
+
     if name then
         self.presetName:setText(name)
     end
@@ -289,26 +290,59 @@ function ui.Window:onDeletePreset()
     if not name or name == "" then return end
 
     if presets.delete(name) then
-        self.reloadPresets()
+        self:reloadPresets()
         self.presetName:setText("")
     end
 end
 
 function ui.Window:onLoadPreset()
+    if not self.selectedId then return end
+
     local name = self.presetCombo:getSelectedData()
 
     if not name or name == "" then return end
 
-    if presets.get(name) then
-        
+    local src = presets.copy(name)
+    if not src then return end
+
+    local schedule = scheduler.loadOrDefaultSchedule(self.selectedId)
+    if not schedule then return end
+
+    for hour = 1, 24 do
+        schedule[hour] = src[hour]
     end
+
+    self:updateGrid()
+    scheduler.tick(true)
+
+    SafehouseExpanded.log("Loaded preset: " .. name)
 end
 
 function ui.Window:onSavePreset()
+    if not self.selectedId then return end
+
+    local name = self.presetName:getText() or ""
+    name = name:match("^%s*(.-)%s*$")
+
+    if not name or name == "" then
+        SafehouseExpanded.warn("Cannot save a preset with no name")
+        return
+    end
+
+    self.presetName:setText(name)
+
+    local schedule = scheduler.loadOrDefaultSchedule(self.selectedId)
+    if not schedule then return end
+
+    if presets.save(name, schedule) then
+        self:reloadPresets(name)
+        SafehouseExpanded.log("Saved preset: " .. name)
+    end
 end
 
 function ui.Window:onPresetNameChanged()
-    local name = self.presetName:getText()
+    local name = self.presetName:getText() or ""
+    name = name:match("^%s*(.-)%s*$")
 
     for _, presetName in ipairs(presets.getAll() or {}) do
         if presetName == name then

@@ -43,6 +43,13 @@ function presets.save(name, schedule)
         return false
     end
 
+    name = name:match("^%s*(.-)%s*$")
+
+    if name == "" then
+        SafehouseExpanded.warn("Cannot save a preset with an empty name")
+        return false
+    end
+
     local copy = {}
     local save = data()
 
