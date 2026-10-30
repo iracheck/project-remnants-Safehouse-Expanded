@@ -157,8 +157,8 @@ function ui.Window:createChildren()
 
 
     -- ensure data is accurate
-    self:reloadRoster()
     self:reloadPresets()
+    self:reloadRoster()
 end
 
 -- ===============
@@ -182,9 +182,18 @@ local function shortenTextToWidth(originalText, width, padding, font)
 
 end
 
+function ui.Window:setComboToMatch()
+    local schedule = self.selectedId and scheduler.loadOrDefaultSchedule(self.selectedId)
+    local match = presets.findMatch(schedule)
+
+    self.presetCombo:setSelectedData(match or "")
+    self.presetName:setText(match or "")
+end
+
 -- update grid to show current job schedule
 function ui.Window:updateGrid()
     local schedule = self.selectedId and scheduler.loadOrDefaultSchedule(self.selectedId) or nil
+    
     local current = getGameTime() and getGameTime():getHour() or -1
 
     local selectedItem = self.memberList.items[self.memberList.selected]
@@ -224,18 +233,26 @@ end
 function ui.Window:reloadRoster()
     local entries = scheduler.getResidents(true)
     self.memberList:clear()
-    for _, item in ipairs(entries) do self.memberList:addItem(item.name,item) end
+
+    for _, item in ipairs(entries) do 
+        local displayName = shortenTextToWidth(item.name, self.memberList:getWidth(), 20, UIFont.Medium)
+        self.memberList:addItem(displayName, item) 
+    end
+
     local index = 1
     for i, entry in ipairs(entries) do
         if entry.id == self.selectedId then index = i break end
     end
+
     if #entries > 0 then
         self.memberList.selected = index
         self.selectedId = entries[index].id
     else
         self.selectedId = nil
     end
+
     self:updateGrid()
+    self:setComboToMatch()
 end
 
 function ui.Window:reloadPresets(selectedName)
@@ -272,8 +289,12 @@ end
 
 function ui.Window:onMemberSelected()
     local item = self.memberList.items[self.memberList.selected]
-    if item and item.item then self.selectedId = item.item.id end
+    if not item or not item.item then return end
+
+    self.selectedId = item.item.id
+
     self:updateGrid()
+    self:setComboToMatch()
 end
 
 function ui.Window:onJobSelected(combo)
@@ -379,6 +400,12 @@ function ui.Window:onSavePreset()
     if not schedule then return end
 
     local exists = presets.get(name) ~= nil
+    local match = presets.findMatch(schedule)
+
+    if match and match ~= name then
+        self:setStatus(getText("UI_Scheduler_Status_AlreadyExists", match), "error")
+        return
+    end
 
     if presets.save(name, schedule) then
         self:reloadPresets(name)
@@ -427,8 +454,9 @@ function ui.open(selectedId)
         
         ui.window:setVisible(true)
         ui.window:bringToTop()
-        ui.window:reloadRoster()
+        
         ui.window:reloadPresets()
+        ui.window:reloadRoster()
         return
     end
 

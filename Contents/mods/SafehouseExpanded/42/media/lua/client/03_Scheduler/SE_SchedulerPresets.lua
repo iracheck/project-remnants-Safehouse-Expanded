@@ -234,3 +234,29 @@ function presets.getAll()
     return all
 
 end
+
+-- Finds a preset that matches a given schedule
+function presets.findMatch(schedule)
+    if not schedule or #schedule ~= 24 then return nil end
+
+    for _, name in ipairs(presets.getAll()) do
+        local preset = presets.get(name)
+
+        if preset then
+            local matches = true
+
+            for hour = 1, 24 do
+                if preset[hour] ~= schedule[hour] then
+                    matches = false
+                    break
+                end
+            end
+
+            if matches then
+                return name
+            end
+        end
+    end
+
+    return nil
+end
