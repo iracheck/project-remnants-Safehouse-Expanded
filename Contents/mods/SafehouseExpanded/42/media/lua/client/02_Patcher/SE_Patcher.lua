@@ -65,6 +65,16 @@ function patcher.installSchedulerPatch()
             local npcId = npc.npcId
 
             local button = ISButton:new(buttonX, buttonY, buttonWidth, buttonHeight, getText("UI_Scheduler_EditSchedule"), self, function()
+                if not schedulerUI then
+                    SafehouseExpanded.warn("SchedulerUI did not load correctly. Trying again...")
+                    schedulerUI = SafehouseExpanded.SchedulerUI
+
+                    if not schedulerUI then
+                        SafehouseExpanded.warn("SchedulerUI STILL did not load correctly. Aborting.")
+                        return
+                    end
+
+                end
                 schedulerUI.open(npcId)
             end
             )
