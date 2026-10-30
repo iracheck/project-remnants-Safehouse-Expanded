@@ -78,11 +78,11 @@ local BUILTIN_PRESETS = {
         "SLEEP", "SLEEP", "COOK", "COOK",
 
         -- 08:00 - 15:00
-        "COOK", "COOK", "COOK", "IDLE",
-        "IDLE", "COOK", "COOK", "COOK",
+        "COOK", "COOK", "COOK", "COOK",
+        "IDLE", "IDLE", "COOK", "COOK",
 
         -- 16:00 - 23:00
-        "COOK", "HAULER", "HAULER", "HAULER",
+        "COOK", "COOK", "HAULER", "HAULER",
         "IDLE", "IDLE", "SLEEP", "SLEEP"
     },
 

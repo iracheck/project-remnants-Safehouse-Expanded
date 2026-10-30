@@ -412,7 +412,11 @@ function ui.Window:onSavePreset()
         SafehouseExpanded.log("Saved preset: " .. name)
 
         if exists then
-            self:setStatus(getText("UI_Scheduler_Status_SaveExistingPreset", name), "success")
+            if name == "Default" then
+                self:setStatus(getText("UI_Scheduler_Status_ReplaceDefault"), "success")
+            else
+                self:setStatus(getText("UI_Scheduler_Status_SaveExistingPreset", name), "success")
+            end  
         else
             self:setStatus(getText("UI_Scheduler_Status_SaveNewPreset", name), "success")
         end
