@@ -9,7 +9,8 @@
 -- SafehouseExpanded dependencies
 require "00_Core/SE_Core"
 require "00_Core/SE_Logger"
-require "00_Core/SE_SchedulerPresets"
+
+require "03_Scheduler/SE_SchedulerPresets"
 
 SafehouseExpanded.Scheduler = SafehouseExpanded.Scheduler or {}
 
