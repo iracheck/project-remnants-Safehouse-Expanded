@@ -93,6 +93,7 @@ function ui.Window:createChildren()
         local btn = ISButton:new(210+col*56, top+90+row*67, 52, 52, tostring(hour), self, ui.Window.onHourClicked)
         btn:initialise()
         btn:instantiate()
+
         btn.hour = hour
         self:addChild(btn)
         self.hourButtons[hour+1] = btn
@@ -295,6 +296,7 @@ function ui.Window:onMemberSelected()
 
     self:updateGrid()
     self:setComboToMatch()
+    self:setStatus("")
 end
 
 function ui.Window:onJobSelected(combo)
