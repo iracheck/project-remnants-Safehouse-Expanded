@@ -103,10 +103,14 @@ function ui.Window:createChildren()
     self.copyButton:instantiate()
     self:addChild(self.copyButton)
 
+    self.copyButton.tooltip = getText("UI_Scheduler_Tooltip_ApplyToAll")
+
     self.applyButton = ISButton:new(650,top+260,232,30,getText("UI_Scheduler_ApplyHourNow"), self, ui.Window.onApplyNow)
     self.applyButton:initialise()
     self.applyButton:instantiate()
     self:addChild(self.applyButton)
+
+    self.applyButton.tooltip = getText("UI_Scheduler_Tooltip_ApplyNow")
 
     -- Select an existing preset
     self.presetCombo = ISComboBox:new(590, top, 140, 26, self, ui.Window.onSelectPreset)
@@ -120,28 +124,39 @@ function ui.Window:createChildren()
     self.presetName:instantiate()
     self:addChild(self.presetName)
 
+    self.presetName.tooltip = getText("UI_Scheduler_Tooltip_Default")
+
     self.presetName.onTextChange = function()
         self:onPresetNameChanged()
     end
 
+    -- Load preset
+    self.loadPresetButton = ISButton:new(590, top + 32, 108, 26, getText("UI_Scheduler_LoadPreset"), self, ui.Window.onLoadPreset)
+    self.loadPresetButton:initialise()
+    self.loadPresetButton:instantiate()
+    self:addChild(self.loadPresetButton)
+
     -- Save preset
-    self.savePresetButton = ISButton:new(590, top + 32, 90, 26, getText("UI_Scheduler_SavePreset"), self, ui.Window.onSavePreset)
+    self.savePresetButton = ISButton:new(704, top + 32, 108, 26, getText("UI_Scheduler_SavePreset"), self, ui.Window.onSavePreset)
     self.savePresetButton:initialise()
     self.savePresetButton:instantiate()
     self:addChild(self.savePresetButton)
 
     -- Delete preset
-    self.deletePresetButton = ISButton:new(686, top + 32, 90, 26, getText("UI_Scheduler_DeletePreset"), self, ui.Window.onDeletePreset)
+    self.deletePresetButton = ISButton:new(818, top + 32, 64, 26, getText("UI_Scheduler_DeletePreset"), self, ui.Window.onDeletePreset)
     self.deletePresetButton:initialise()
     self.deletePresetButton:instantiate()
     self:addChild(self.deletePresetButton)
 
-    -- Load preset
-    self.loadPresetButton = ISButton:new(782, top + 32, 100, 26, getText("UI_Scheduler_LoadPreset"), self, ui.Window.onLoadPreset)
-    self.loadPresetButton:initialise()
-    self.loadPresetButton:instantiate()
-    self:addChild(self.loadPresetButton)
+    self.statusLabel = ISLabel:new(210, top + 310, 20, "", 1, 1, 1, 1, UIFont.Small, true)
+    self.statusLabel:initialise()
+    self:addChild(self.statusLabel)
 
+
+
+
+
+    -- ensure data is accurate
     self:reloadRoster()
     self:reloadPresets()
 end
@@ -225,13 +240,30 @@ end
 
 function ui.Window:reloadPresets(selectedName)
     self.presetCombo:clear()
-    self.presetCombo:addOptionWithData("Select Preset", "")
+    self.presetCombo:addOptionWithData(getText("UI_Scheduler_SelectPreset"), "")
 
     for _, name in ipairs(presets.getAll() or {}) do
         self.presetCombo:addOptionWithData(name, name)
     end
 
     self.presetCombo:setSelectedData(selectedName or "")
+end
+
+
+function ui.Window:setStatus(message, type)
+    if not self.statusLabel then return end
+
+    self.statusLabel:setName(message)
+
+    if type == "success" then
+        self.statusLabel:setColor(0.4, 0.9, 0.4)
+    elseif type == "error" then
+        self.statusLabel:setColor(1, 0.35, 0.35)
+    elseif type == "warning" then
+        self.statusLabel:setColor(1, 0.8, 0.3)
+    else
+        self.statusLabel:setColor(1, 1, 1)
+    end
 end
 
 -- ===================
@@ -262,11 +294,15 @@ end
 -- copy schedule to all other survivors
 function ui.Window:onCopyAll()
     if not self.selectedId then return end
+
     local src = scheduler.loadOrDefaultSchedule(self.selectedId)
+    
     for _, member in ipairs(scheduler.getResidents(true)) do
         local dst = scheduler.loadOrDefaultSchedule(member.id)
         for h=1,24 do dst[h] = src[h] end
     end
+
+    self:setStatus(getText("UI_Scheduler_Status_CopyAll"), "success")
     self:updateGrid()
 end
 
@@ -274,6 +310,7 @@ end
 function ui.Window:onApplyNow()
     scheduler.lastApplied = {}
     scheduler.tick(true)
+    self:setStatus(getText("UI_Scheduler_Status_ApplyNow"), "success")
 end
 
 function ui.Window:onSelectPreset(combo)
@@ -292,6 +329,8 @@ function ui.Window:onDeletePreset()
     if presets.delete(name) then
         self:reloadPresets()
         self.presetName:setText("")
+
+        self:setStatus(getText("UI_Scheduler_Status_DeletePreset", name), "success")
     end
 end
 
@@ -303,7 +342,10 @@ function ui.Window:onLoadPreset()
     if not name or name == "" then return end
 
     local src = presets.copy(name)
-    if not src then return end
+    if not src then
+        self:setStatus(getText("UI_Scheduler_Status_PresetNotFound"), "error")
+        return
+    end
 
     local schedule = scheduler.loadOrDefaultSchedule(self.selectedId)
     if not schedule then return end
@@ -315,6 +357,7 @@ function ui.Window:onLoadPreset()
     self:updateGrid()
     scheduler.tick(true)
 
+    self:setStatus(getText("UI_Scheduler_Status_LoadPreset", name), "success")
     SafehouseExpanded.log("Loaded preset: " .. name)
 end
 
@@ -325,6 +368,7 @@ function ui.Window:onSavePreset()
     name = name:match("^%s*(.-)%s*$")
 
     if not name or name == "" then
+        self:setStatus(getText("UI_Scheduler_Status_EmptyName"), "error")
         SafehouseExpanded.warn("Cannot save a preset with no name")
         return
     end
@@ -334,9 +378,19 @@ function ui.Window:onSavePreset()
     local schedule = scheduler.loadOrDefaultSchedule(self.selectedId)
     if not schedule then return end
 
+    local exists = presets.get(name) ~= nil
+
     if presets.save(name, schedule) then
         self:reloadPresets(name)
         SafehouseExpanded.log("Saved preset: " .. name)
+
+        if exists then
+            self:setStatus(getText("UI_Scheduler_Status_SaveExistingPreset", name), "success")
+        else
+            self:setStatus(getText("UI_Scheduler_Status_SaveNewPreset", name), "success")
+        end
+    else
+        self:setStatus(getText("UI_Scheduler_Status_FailedToSave"), "error")
     end
 end
 

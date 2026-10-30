@@ -1,11 +1,29 @@
 {
+    "UI_Scheduler_EditSchedule": "Edit Schedule",
+    
     "UI_Scheduler_WindowName": "Schedule Editor",
     "UI_Scheduler_EditingSchedule": "Editing Schedule of %1",
+
     "UI_Scheduler_ApplyHourNow": "Apply current hour now",
     "UI_Scheduler_ApplyToAll": "Apply schedule to all NPCs",
-    "UI_Scheduler_EditSchedule": "Edit Schedule",
-    "UI_Scheduler_SavePreset": "Save",
+
+    "UI_Scheduler_SelectPreset": "Select Preset",
+    "UI_Scheduler_SavePreset": "Save Preset",
     "UI_Scheduler_DeletePreset": "Delete",
-    "UI_Scheduler_LoadPreset": "Load Preset"
-    
+    "UI_Scheduler_LoadPreset": "Load",
+
+    "UI_Scheduler_Status_CopyAll": "Copied schedule to all survivors.",
+    "UI_Scheduler_Status_ApplyNow": "Applied current hour to all survivors.",
+    "UI_Scheduler_Status_SaveNewPreset": "Preset \"%1\" saved.",
+    "UI_Scheduler_Status_SaveExistingPreset": "Preset \"%1\" updated.",
+    "UI_Scheduler_Status_LoadPreset": "Preset \"%1\" loaded.",
+    "UI_Scheduler_Status_DeletePreset": "Preset \"%1\" deleted.",
+
+    "UI_Scheduler_Status_PresetNotFound": "Preset not found.",
+    "UI_Scheduler_Status_FailedToSave": "Failed to save preset.",
+    "UI_Scheduler_Status_EmptyName": "Please enter a preset name.",
+
+    "UI_Scheduler_Tooltip_Default": "Save a preset named \"Default\" to automatically assign its schedule to new survivors. Existing schedules are not affected.",
+    "UI_Scheduler_Tooltip_ApplyToAll": "Replace every survivor's scheduler with the currently selected survivors schedule.",
+    "UI_Scheduler_Tooltip_ApplyNow": "Immediately reapply the scheduled jobs for the current hour."
 }
