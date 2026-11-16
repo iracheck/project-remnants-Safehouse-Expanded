@@ -10,12 +10,17 @@
 require "00_Core/SE_Core"
 require "00_Core/SE_Logger"
 
+-- submod compatability
+require "01_Integration/SE_PRQP"
+
 require "03_Scheduler/SE_SchedulerPresets"
+
 
 SafehouseExpanded.Scheduler = SafehouseExpanded.Scheduler or {}
 
 local scheduler = SafehouseExpanded.Scheduler
 local presets = SafehouseExpanded.SchedulerPresets
+local prqp_patch = SafehouseExpanded.PRQP
 
 -- ======================
 -- DATA & CONFIGURATION |
@@ -164,6 +169,17 @@ end
 
 function scheduler.apply(npcId, desired, force)
     if not desired then return end
+
+    -- PRQP has priority over scheduling.
+    if prqp.isBusy(npcId) then
+        scheduler.lastApplied[npcId] = nil
+        return
+    end
+
+    if not force and scheduler.lastApplied[npcId] == desired then
+        return
+    end
+
     if not force and scheduler.lastApplied[npcId] == desired then return end
 
     local ok = false
