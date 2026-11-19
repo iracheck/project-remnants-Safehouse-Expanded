@@ -153,9 +153,7 @@ function ui.Window:createChildren()
     self.statusLabel:initialise()
     self:addChild(self.statusLabel)
 
-
-
-
+    SafehouseExpanded.getBranding(self, self.width, self.height)
 
     -- ensure data is accurate
     self:reloadPresets()
