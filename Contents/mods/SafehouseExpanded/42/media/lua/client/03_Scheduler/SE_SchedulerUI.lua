@@ -40,11 +40,13 @@ local JOB_COLORS = {
     DEFAULT = {r=0.384, g=0.412, b=0.443, a=0.9}
 }
 
+
 -- =================
 -- CREATING WINDOW |
 -- =================
 
 ui.Window = ISCollapsableWindow:derive("AdvancedSchedulerWindow")
+
 function ui.Window:new()
     local w, h = 910, 430
     local sw = getCore():getScreenWidth()
@@ -55,8 +57,61 @@ function ui.Window:new()
     window.title = getText("UI_Scheduler_WindowName")
     window.selectedId = nil
     window.jobId = "IDLE"
+    window.isPainting = false
+
     return window
 end
+
+
+function ui.Window:update()
+    ISCollapsableWindow.update(self)
+
+    local down = isMouseButtonDown(0)
+    local mx, my = getMouseX(), getMouseY()
+
+    local hovered = nil
+
+    -- check if within button bounds
+    for _, btn in ipairs(self.hourButtons or {}) do
+        local x, y = btn:getAbsoluteX(), btn:getAbsoluteY()
+
+
+        if mx >= x and mx < x + btn.width
+            and my >= y and my < y + btn.height then
+            hovered = btn
+            break
+        end
+    end
+
+    -- Start painting only if the click began on an hour.
+    if down and not self.wasMouseDown and hovered then
+        self.isPainting = true
+    end
+
+    if down and self.isPainting and hovered and self.selectedId then
+        local schedule = scheduler.loadOrDefaultSchedule(self.selectedId)
+
+        if schedule and schedule[hovered.hour + 1] ~= self.jobId then
+            schedule[hovered.hour + 1] = self.jobId
+            self.paintChanged = true
+            self:updateGrid()
+
+            getSoundManager():playUISound("UISelectListItem")
+        end
+    end
+
+    if not down and self.isPainting then
+        self.isPainting = false
+
+        if self.paintChanged then
+            scheduler.tick(true)
+            self.paintChanged = false
+        end
+    end
+
+    self.wasMouseDown = down
+end
+
 
 function ui.Window:createChildren()
     ISCollapsableWindow.createChildren(self)
@@ -93,7 +148,7 @@ function ui.Window:createChildren()
     for hour=0,23 do
         local col = hour % 12
         local row = math.floor(hour / 12)
-        local btn = ISButton:new(210+col*56, top+90+row*67, 52, 52, tostring(hour), self, ui.Window.onHourClicked)
+        local btn = ISButton:new(210+col*56, top+90+row*67, 52, 52, tostring(hour), self, nil)
         btn:initialise()
         btn:instantiate()
 
