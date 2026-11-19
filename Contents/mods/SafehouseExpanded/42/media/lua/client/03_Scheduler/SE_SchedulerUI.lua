@@ -10,6 +10,8 @@ require "00_Core/SE_Core"
 require "03_Scheduler/SE_AdvancedScheduler"
 require "03_Scheduler/SE_SchedulerPresets"
 
+require "01_Integration/SE_PRQP"
+
 require "ISUI/ISLabel"
 require "ISUI/ISCollapsableWindow"
 require "ISUI/ISButton"
@@ -22,6 +24,7 @@ SafehouseExpanded.SchedulerUI = SafehouseExpanded.SchedulerUI or {}
 local ui = SafehouseExpanded.SchedulerUI
 local scheduler = SafehouseExpanded.Scheduler
 local presets = SafehouseExpanded.SchedulerPresets
+local prqp_patch = SafehouseExpanded.PRQP
 
 -- jobId : color
 local JOB_COLORS = {
@@ -329,9 +332,17 @@ end
 
 -- Resets last applied, so the next tick will automatically apply the jobs
 function ui.Window:onApplyNow()
+    local busy = prqp_patch.countBusy()
+
     scheduler.lastApplied = {}
     scheduler.tick(true)
-    self:setStatus(getText("UI_Scheduler_Status_ApplyNow"), "success")
+
+    if busy == 0 then
+        self:setStatus(getText("UI_Scheduler_Status_ApplyNow"), "success")
+    else
+        self:setStatus(getText("UI_Scheduler_Status_PRQP_NPC_IsOccupied", busy), "warning")
+    end
+
 end
 
 function ui.Window:onSelectPreset(combo)
